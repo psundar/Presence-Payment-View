@@ -4,10 +4,10 @@ This code creates a lwc to manage project payments by clients. This code is part
 
 ## Data Modal
 
-###Standard Objects
+### Standard Objects
 1. Contact
 
-###Custom Objects
+### Custom Objects
 1. Project
 2. Presence Payment
 3. Payments to Projects junction object
