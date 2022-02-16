@@ -1,18 +1,25 @@
-# Salesforce DX Project: Next Steps
+# Client Project Payment Management
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This code creates a lwc to manage project payments by clients. This code is part of a coding assignment.
 
-## How Do You Plan to Deploy Your Changes?
+## Data Modal
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+###Standard Objects
+1. Contact
 
-## Configure Your Salesforce DX Project
+###Custom Objects
+1. Project
+2. Presence Payment
+3. Payments to Projects junction object
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+## How to use
 
-## Read All About It
+The following are the steps to use app,
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+1. The lwc is added as a custom Tab called "Presence Payments View" under service app. 
+2. Contacts and Projects are added through standard record pages.
+3. Data for Presence Payments and Payments to projects are added through the custom lwc.
+4. To add payments to projects. First add parent payment information by clicking the "Add Payment" button. Then add individual payments to projects using "Add Payments to Projects" button.
+5. Only the payment information is editable. Use inline edit.
+6. To delete a payment to project, click the row action button at the end of payment information and select 'Delete' action.
+
