@@ -1,0 +1,185 @@
+<template>
+    <lightning-card title="Client Payments Information" icon-name="custom:custom63">
+        <lightning-tile class="slds-box" label="NOTE">   
+            <p class="slds-var-p-horizontal_small">Client payment information on projects. <br> 
+                    To create a new payment information, please add Parent Payment record first and then add information for the junction object so that you can lookup presence payment object while creating the junction record. </p>
+        </lightning-tile> 
+       
+            <template if:true={contactsList}>
+                <template for:each={contactsList} for:item="contact">
+                    <table key={contact.Id} class="slds-table slds-table_cell-buffer slds-table_bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead >
+                            <tr class="slds-line-height_reset ">
+                                <th class="" scope="col"><div class="slds-col slds-size_1-of-5">Contact Name</div></th>
+                                <th class="" scope="col"><div class="slds-col slds-size_1-of-5" style="width:200px overflow-wrap: break-word">Most Recent Payment Date</div></th>
+                                <th class="" scope="col"><div class="slds-col slds-size_1-of-5" style="width:150px">Project Expense Amount</div></th>
+                                <th><div class="slds-col slds-size_2-of-5"></div></th>
+                                <th class="" scope="col"><div class="slds-col slds-size_1-of-5" style="width:300px">Payments</div></th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr key={contact.Id} class="slds-line-height_reset slds-hint-parent">
+                                    <td class="" scope="row"><div class="slds-col slds-size_1-of-4">
+                                        <p key={contact.Id}>{contact.Name}</p>
+                                    </div></td>
+                                    <td><div class="slds-col slds-size_1-of-4">
+                                        <p key={contact.Id}>{contact.Most_Recent_Payment_Date__c}</p>
+                                    </div></td>
+                                    <td><div class="slds-col slds-size_1-of-4">
+                                        <p key={contact.Id}>{contact.Project_Expense_Amount__c}</p>
+                                    </div></td>
+                                    <td>
+                                        <div class="slds-grid slds-grid_vertical" style="width:150px">
+                                            <div class="slds-col">
+                                              <span>
+                                                  <lightning-button   class="slds-button slds-button_outline-brand slds-button_full-width"
+                                                style="transform: scale(0.75)"
+                                                name={contact.Id}
+                                                variant="brand"    
+                                                label="Add Payment" 
+                                                    alternative-text="Add Payment"
+                                                    onclick={addPaymentButtonClick}>
+                                                    <label>Add New Payment</label></lightning-button>
+                                                </span>
+                                            </div>
+                                            <div class="slds-col">
+                                              <span>
+                                                <lightning-button       class="slds-button slds-button_outline-brand slds-button_full-width"
+                                                style="transform: scale(0.75)"
+                                                name={contact.Id}
+                                                variant="brand"
+                                                label="Add Payment to Project" 
+                                                    alternative-text="Add Payment to Project"
+                                                    onclick={addProjectPaymentButtonClick}>
+                                                    <label>Add Payment to Project</label></lightning-button>
+                                              </span>
+                                            </div>
+                                        </div>
+                                        </td>
+                                    <td>
+                                            <div class="slds-col" key={contact.Id}>
+                                                <lightning-datatable
+                                                        class="tablecls"
+                                                        key-field="Id"
+                                                        hide-checkbox-column="true"
+                                                        onrowaction={handleRowAction}
+                                                        onsave={handlePaymentInlineEditSave}
+                                                        columns={columns}
+                                                        data={contact.Payments_to_Projects__r}
+                                                        >
+                                                </lightning-datatable>
+                                            </div>
+                                    </td>
+                                                        
+                                </tr>
+                            </tbody>
+                        </table>      
+                            
+                </template>
+            </template>
+           
+        
+    </lightning-card>
+
+    <!-- conditionally (on add payment button click) display add payment record form with the following fields:
+    1. Payment Name
+    2. Payment Source
+    3. Payment Transaction Id 
+    4. prepopulate contact lookup Information-->
+     <template if:true={isCreatePaymentModalOpen}>
+        <section aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container ">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_small">Create a new Payment record for Contact {contactId}</h2>
+                        
+                        
+                        
+                        
+                        
+                        
+                    <lightning-icon class="slds-modal__close" icon-name="utility:close" size="small" onclick={closeCreatePaymentModal}></lightning-icon>
+                </header>
+                <div class="slds-modal__content">
+                    <div class="slds-var-p-around_small">
+                        <lightning-record-edit-form object-api-name="Presence_Payment__c" onsuccess={handlePaymentRecordCreateSuccess} onsubmit={handleSavePayment}>
+                            <lightning-messages> </lightning-messages>
+                            <lightning-input-field field-name="Name" required="true"> </lightning-input-field>
+                            <lightning-input-field disabled=true field-name="Payer__c" value={contactId}> </lightning-input-field>
+                            <lightning-input-field field-name="Payment_Source__c" required="true"> </lightning-input-field>
+                            <lightning-input-field field-name="Payment_Transaction_Identifier__c" required="true"> </lightning-input-field>    
+                            
+                                <lightning-button
+                                    variant="brand"
+                                    id="createNewPayment"
+                                    class="slds-var-m-top_small"
+                                    type="submit"
+                                    label="Create New Payment">
+                                </lightning-button>      
+                                     
+                        </lightning-record-edit-form>
+                        <footer class="slds-modal__footer">
+                           
+                            <lightning-button variant="brand" label="Cancel" onclick={closeCreatePaymentModal} class="slds-var-p-around_x-small"></lightning-button>  
+                        </footer> 
+
+
+                    </div>
+                </div>
+               
+                   
+                   
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+        
+    
+    <!-- conditionally (on add payment to project button click) display add project payment form with the following fields:
+    1. Payment Name
+    2. project id
+    3. Payment transaction id
+    5. payment date
+    6. payment amount -->
+    <template if:true={isAddPaymentToProjectModalOpen}>
+        <section aria-modal="true" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container ">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_small">Add Payments to Projects</h2>
+                    <lightning-icon class="slds-modal__close" icon-name="utility:close" size="small" onclick={closeAddPaymentToProjectModal}></lightning-icon>
+                </header>
+                <div class="slds-modal__content">
+                    <div class="slds-var-p-around_small">
+                        <lightning-record-edit-form object-api-name="Payments_to_Projects__c" onsuccess={handleProjectPaymentRecordCreateSuccess} onsubmit={handleSaveProjectPayment}>
+                            <lightning-messages> </lightning-messages>
+                            <lightning-input-field field-name="Name" required="true"> </lightning-input-field>
+                            <lightning-input-field field-name="Project__c" onchange={handleProjectLookUpOnCreate} required="true"> </lightning-input-field>
+                            <lightning-input-field disabled=true field-name="Payer__c" value={contactId}> </lightning-input-field>
+                            <lightning-input-field field-name="Presence_Payment__c" onchange={handlePaymentLookUpOnCreate}> </lightning-input-field>
+                            <lightning-input-field field-name="Payment_Date__c" required="true"> </lightning-input-field>
+                            <lightning-input-field field-name="Payment_Amount__c" required="true"> </lightning-input-field>
+                            <lightning-button
+                                            id="addPaymentToPorject"
+                                            variant="brand"
+                                            class="slds-var-m-top_small"
+                                            type="submit"
+                                            label="Add Payment to Project">
+                                        </lightning-button>
+                            
+                        </lightning-record-edit-form>
+                        <footer class="slds-modal__footer">
+                            <lightning-button variant="brand" label="Cancel" onclick={closeAddPaymentToProjectModal} class="slds-var-p-around_x-small"></lightning-button>
+                        </footer>
+
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    
+</template>
